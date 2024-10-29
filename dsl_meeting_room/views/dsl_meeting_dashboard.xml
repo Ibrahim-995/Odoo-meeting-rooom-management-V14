@@ -1,0 +1,113 @@
+<odoo>
+    <data>
+        <!-- Kanban View for Dashboard -->
+        <record id="view_dashboard_kanban" model="ir.ui.view">
+            <field name="name">dsl.dashboard.kanban</field>
+            <field name="model">dsl.dashboard</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_view" create="false" edit="false">
+                    <field name="name"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click" style="width: 100% !important; padding: 10 px;">
+                                <div class="row mb4 text-center">
+                                    <div class="col-12">
+                                        <h1>Meeting Room Booking Dashboard</h1>
+                                    </div>
+                                </div>
+                                <div class = "container">
+                                    <div class="row mb4">
+                                        <div class="col-6 mb-4">
+                                            <div class="card text-center" style="background-color: #ff0720;">
+                                                <div class="card-body">
+                                                    <h2 class="card-title">Today's Bookings</h2>
+                                                    <p class="card-text" style="font-weight: bold; font-size: x-large;">
+                                                        <field name="today_bookings"/>
+                                                    </p>
+                                                    <div class="text-center">
+                                                        <button type="object" class="btn btn-primary btn-sm" name="action_view_today_bookings">View Today's Bookings</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 mb-4">
+                                            <div class="card text-center" style="background-color: #ffc107;" >
+                                                <div class="card-body">
+                                                    <h2 class="card-title">My Bookings</h2>
+                                                    <p class="card-text" style="font-weight: bold; font-size: x-large;">
+                                                        <field name="my_bookings"/>
+                                                    </p>
+                                                    <div class="text-center">
+                                                        <button type="object" class="btn btn-primary btn-sm" name="action_view_my_bookings">View My Bookings</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb4">
+                                        <div class="col-6 mb-4">
+                                            <div class="card text-center" style="background-color: #00f99b;">
+                                                <div class="card-body">
+                                                    <h2 class="card-title">Total Meeting Rooms</h2>
+                                                    <p class="card-text" style="font-weight: bold; font-size: x-large;">
+                                                        <field name="total_meeting_rooms"/>
+                                                    </p>
+                                                    <div class="text-center">
+                                                        <button type="object" class="btn btn-primary btn-sm" name="action_view_meeting_rooms">View Meeting Rooms</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 mb-4">
+                                            <div class="card text-center" style="background-color: #5907ff;">
+                                                <div class="card-body">
+                                                    <h2 class="card-title">Total Facilities</h2>
+                                                    <p class="card-text" style="font-weight: bold; font-size: x-large;">
+                                                        <field name="total_facilities"/>
+                                                    </p>
+                                                    <div class="text-center">
+                                                        <button type="object" class="btn btn-primary btn-sm" name="action_view_meeting_facility">View Facilities</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb4">
+                                        <div class="col-12 text-center">
+                                            <button type="object" class="btn btn-primary btn-lg" name="create_booking" style="width: 30%; margin: 25px 0px; border-radius: 5px;min-height: 60px;background-color:#5B899E !important;font-weight: bold; font-size: x-large;">
+                                                <span>Booking Request</span>
+                                            </button>
+                                        </div>
+                                        <div class="col-12 text-center">
+                                            <button type="object" class="btn btn-primary btn-lg" name="view_calendar" style="width: 30%; margin: 25px 0px; border-radius: 5px;min-height: 60px;background-color:#5B899E !important;font-weight: bold; font-size: x-large;">
+                                                <span>View On Calendar</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Action to Open the Dashboard -->
+        <record id="action_dashboard" model="ir.actions.act_window">
+            <field name="name">Dashboard</field>
+            <field name="res_model">dsl.dashboard</field>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="view_dashboard_kanban"/>
+            
+        </record>
+
+        <!-- Menu Item for Dashboard -->
+        <menuitem id="menu_meeting_room_dashboard" name="Dashboard" parent="menu_meeting_room_root" action="action_dashboard" sequence="99"/>
+
+        <!-- Create a Default Dashboard Record -->
+        <record id="dsl_dashboard_default" model="dsl.dashboard">
+            <field name="name">Main Dashboard</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,198 @@
+<odoo>
+    <record id="view_booking_room_tree" model="ir.ui.view">
+        <field name="name">dsl.booking.room.tree</field>
+        <field name="model">dsl.booking.room</field>
+        <field name="arch" type="xml">
+            <tree string="Meeting Room Booking">
+                <field name="code"/>
+                <field name="booking_employee"/>
+                <field name="booking_room"/>
+                <field name="state"   
+					    decoration-success="state == 'approve'"
+						decoration-info="state == 'draft'"
+						decoration-danger="state == 'reject'"
+						decoration-warning="state == 'request'"
+						widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="view_booking_room_form" model="ir.ui.view">
+        <field name="name">dsl.booking.room.form</field>
+        <field name="model">dsl.booking.room</field>
+        <field name="arch" type="xml">
+            
+                <form string="Meeting Room Booking">
+                    <header>
+                            <button name="request" string="Send Request" type="object" states="draft" class="btn-primary"/>
+                            <button name="approve" string="Approve" type="object" states="request" class="btn-primary" groups = 'dsl_meeting_room.group_meeting_room_booking_manager'/>
+                            <button name="reject" string="Reject" type="object" states="request" class="btn-primary" groups = 'dsl_meeting_room.group_meeting_room_booking_manager'/>
+                            <field name="state" widget="statusbar" statusbar_visible="draft,request,approve,reject"/>
+                        </header>
+                    <sheet>
+                        <div class="oe_title">
+                                <h1>
+                                    <field name="code" readonly="1"/>
+                                </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="booking_employee" required = "1"/>
+                                <field name="meeting_date" widget = 'date' required = "1"/>
+                                <field name="participant_count"/>
+                                <field name="meeting_duration" widget="float_time"/>
+                            </group>
+
+                            <group>
+                                <field name="company_id" required = "1"/>
+                                <field name="booking_room" required = "1"/>
+                                <field name="room_no"/>
+                                <field name="purpose_meeting" widget="text" required = "1" placeholder="Enter Purpose of Meeting" style="height: 100px;" multiline="True"/>
+                            </group>
+                            
+                        </group>
+
+                        <label string="Start Time ➡ End Time" for="start_time"/>
+                                        <div name="start-end_time">
+                                            <div class="oe_inline" style="display: inline;">
+                                                <h3>
+                                                  <field name="start_time" required = "1" placeholder= "00:00" class="oe_inline"/>   ➡   <field name="end_time"  required = "1" placeholder= "00:00" class="oe_inline"/>
+                                                </h3>
+                                            </div>
+                                        </div>
+                        <div>
+                            <h6 style="margin-top: 5px;">[ Note: 24-Hour Time Format, Spliting minutes with ' : '  or  ' . ' ]</h6>
+                        </div>
+
+                        <notebook>
+                            <page name="facility" string="Room Facility">
+                                <field name="booking_facility_line" mode="tree" widget="one2many_list">
+                                    <tree editable="bottom">
+                                        <field name="facility_name"/>
+                                        <field name="facility_quantity"/>  
+                                        <field name="booking_id" invisible = "1"/>                                      
+                                    </tree>
+                                    <form>
+                                        <group>
+                                            <group>
+                                                <field name="facility_name"/>
+                                            </group>
+                                            <group>
+                                                <field name="facility_quantity"/> 
+                                            </group>
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+
+                            <page name="image" string="Image">
+                                <field name="room_image" widget="image"/>
+                            </page>
+                             
+                            <page name="note" string="Note">
+                                <field name="note" widget="text" placeholder="Enter your notes" style="height: 200px;" multiline="True"/>
+                            </page>
+                            
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="activity_ids" widget="mail_activity"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+        </field>
+    </record>
+
+    <record id="view_booking_room_calendar" model="ir.ui.view">
+            <field name="name">dsl.booking.room.calendar</field>
+            <field name="model">dsl.booking.room</field>
+            <field name="arch" type="xml">
+                <calendar string="Meeting Room Booking Calendar" date_start="meeting_date" date_stop="meeting_date" color="booking_room" event_limit = "5" mode="month" quick_add="False">
+                    <field name = 'state' filters = "1"/>
+                    <field name="code"/>
+                    <field name="booking_room" filters = "1"/>
+                    <field name="booking_employee"/>
+                </calendar>
+            </field>
+    </record>
+
+
+    <record id="action_dsl_booking_room" model="ir.actions.act_window">
+            <field name="name">All Bookings</field>
+            <field name="res_model">dsl.booking.room</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="view_id" ref="view_booking_room_tree"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create o_view_nocontent_smiling_face">
+                    Add a new record.
+                </p>
+            </field>
+    </record>
+
+
+    <record id="action_my_bookings" model="ir.actions.act_window">
+        <field name="name">My Bookings</field>
+        <field name="res_model">dsl.booking.room</field>
+        <field name="view_mode">tree,form,calendar</field>
+        <field name="context">{}</field>
+        <field name="domain">[('booking_employee.user_id', '=', uid)]</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to view your bookings.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_bookings_approve" model="ir.actions.act_window">
+        <field name="name">To Be Approve</field>
+        <field name="res_model">dsl.booking.room</field>
+        <field name="view_mode">tree,form,calendar</field>
+        <field name="context">{}</field>
+        <field name="domain">[('state', '=', 'request')]</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                No bookings To be approve.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_today_bookings" model="ir.actions.act_window">
+        <field name="name">Today Bookings</field>
+        <field name="res_model">dsl.booking.room</field>
+        <field name="view_mode">tree,form,calendar</field>
+        <field name="context">{}</field>
+        <field name="domain">[('meeting_date', '=', (context_today().strftime('%Y-%m-%d')))]</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to view today's bookings.
+            </p>
+        </field>
+    </record>
+
+    
+
+
+    <menuitem id="menu_meeting_room_root" name="Meeting Room " sequence="5" web_icon="dsl_meeting_room,static/description/icon.png"/>
+
+    <menuitem id="menu_meeting_room_configuaration" name="Configuaration" parent="menu_meeting_room_root" sequence="202" groups = 'dsl_meeting_room.group_meeting_room_booking_manager'/>
+
+    <menuitem id="menu_meeting_room_bookings" name="Room Bookings" parent="menu_meeting_room_root" sequence="201"/>
+
+    <menuitem id="menu_meeting_room_allbooking" name="All Bookings" action="action_dsl_booking_room" parent="menu_meeting_room_bookings" sequence="100" groups = 'dsl_meeting_room.group_meeting_room_booking_manager'/>
+
+    <menuitem id="menu_my_bookings" name="My Bookings" parent="menu_meeting_room_bookings" action="action_my_bookings" sequence="101"/>
+
+    <menuitem id="menu_today_bookings" name="Today Bookings" parent="menu_meeting_room_bookings" action="action_today_bookings" sequence="102"/>
+
+    <menuitem id="menu_bookings_approve" name="To Be Approve" parent="menu_meeting_room_bookings" action="action_bookings_approve" sequence="103" groups = 'dsl_meeting_room.group_meeting_room_booking_manager'/>
+
+    <menuitem id="menu_meeting_room_configuaration_room" name="Meeting Room" parent="menu_meeting_room_configuaration" action="action_meeting_room" sequence="201"/>
+
+    <menuitem id="menu_meeting_room_configuaration_facility" name="Meeting Facility" parent="menu_meeting_room_configuaration" action="action_dsl_meeting_facility_view" sequence="202"/>
+
+</odoo>

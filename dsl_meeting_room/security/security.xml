@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record  id="meeting_room_booking_security" model="ir.module.category">
+            <field name="name">Meeting Room Booking</field>
+        </record>
+
+        <record id="group_meeting_room_booking_manager" model="res.groups">
+            <field name="name">Manager Access</field>
+            <field name="category_id" ref="meeting_room_booking_security" />
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+        </record>
+
+        <record id="group_meeting_room_booking_user" model="res.groups">
+            <field name="name">User Access</field>
+            <field name="category_id" ref="meeting_room_booking_security" />
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+        </record>
+        
+    </data>
+</odoo>
